@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Calibration · BioForm AI{% endblock %}
+{% block content %}
+<div class="page-head modern-head">
+  <div>
+    <div class="eyebrow">EXERCISE CALIBRATION</div>
+    <h1>Tune movement <span>thresholds.</span></h1>
+    <p>Prototype thresholds can be adjusted using representative exercise recordings before final validation.</p>
+  </div>
+</div>
+
+<div class="two-col calibration-layout">
+  <div class="card form">
+    <div class="card-head"><div><span class="step-badge">SELECT</span><h3>Exercise profile</h3></div></div>
+    <label>
+      <span class="field-label">Exercise</span>
+      <select onchange="location='{{ url_for('calibration') }}?exercise='+encodeURIComponent(this.value)">
+        {% for name in configs %}<option {% if name==selected %}selected{% endif %}>{{ name }}</option>{% endfor %}
+      </select>
+    </label>
+
+    <div class="profile-panel">
+      <div><span>Category</span><b>{{ cfg.category }}</b></div>
+      <div><span>Primary joint</span><b>{{ cfg.joint|title }}</b></div>
+      <div><span>Recommended view</span><b>{{ cfg.view }}</b></div>
+      <div><span>Type</span><b>{{ 'Static hold' if cfg.get('static', False) else 'Dynamic reps' }}</b></div>
+    </div>
+  </div>
+
+  <form class="card form" method="post">
+    <input type="hidden" name="exercise" value="{{ selected }}">
+    <div class="card-head">
+      <div><span class="step-badge">TUNE</span><h3>{{ selected }}</h3></div>
+      <span class="soft-pill accent">Editable</span>
+    </div>
+
+    {% if not cfg.get('static', False) %}
+    <div class="form-grid">
+      <label><span class="field-label">Low threshold</span><input name="low" type="number" step="0.1" value="{{ cfg.low }}"></label>
+      <label><span class="field-label">High threshold</span><input name="high" type="number" step="0.1" value="{{ cfg.high }}"></label>
+    </div>
+    <div class="threshold-visual">
+      <span class="threshold-low">LOW {{ cfg.low }}°</span>
+      <div><i></i></div>
+      <span class="threshold-high">HIGH {{ cfg.high }}°</span>
+    </div>
+    {% else %}
+    <div class="info-box">This is a static-hold exercise; dynamic repetition thresholds are not used.</div>
+    {% endif %}
+
+    <label>
+      <span class="field-label">Recommended camera view</span>
+      <input name="view" value="{{ cfg.view }}">
+    </label>
+
+    <button class="btn primary btn-full" type="submit">Save calibration</button>
+  </form>
+</div>
+
+<div class="note">
+  <span class="note-icon">!</span>
+  <div><b>Calibration reminder</b><br>Thresholds should be supported by representative videos and testing. Do not treat prototype values as clinical limits.</div>
+</div>
+{% endblock %}

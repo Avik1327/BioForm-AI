@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Metrics · BioForm AI{% endblock %}
+{% block content %}
+<div class="page-head modern-head">
+  <div>
+    <div class="eyebrow">MODEL EVALUATION</div>
+    <h1>Measure what the <span>PINN learned.</span></h1>
+    <p>Regression metrics evaluate how closely the predicted fatigue values follow the target values on held-out data.</p>
+  </div>
+</div>
+
+{% if metrics %}
+<div class="metrics premium-metrics metrics-page">
+  <div class="metric-card"><div class="metric-top"><span>R²</span><i>Variance explained</i></div><b>{{ '%.4f'|format(metrics.r2) }}</b><small>Higher is better</small></div>
+  <div class="metric-card"><div class="metric-top"><span>MAE</span><i>Avg absolute error</i></div><b>{{ '%.2f'|format(metrics.mae_percentage_points) }}<small> pts</small></b><small>Lower is better</small></div>
+  <div class="metric-card"><div class="metric-top"><span>MSE</span><i>Squared error</i></div><b>{{ '%.6f'|format(metrics.mse) }}</b><small>Penalizes large errors</small></div>
+  <div class="metric-card"><div class="metric-top"><span>RMSE</span><i>Error scale</i></div><b>{{ '%.6f'|format(metrics.rmse) }}</b><small>Same normalized target scale</small></div>
+</div>
+
+<div class="note metric-note">
+  <span class="note-icon">i</span>
+  <div>
+    <b>Why no standard “accuracy” percentage?</b><br>
+    Fatigue estimation is a regression task. MAE, MSE, RMSE and R² are the appropriate formal metrics.
+    A value such as 100 − MAE percentage points is only an informal closeness description.
+  </div>
+</div>
+
+<section class="section">
+  <div class="section-heading compact">
+    <div><div class="eyebrow">VISUAL EVALUATION</div><h2>Prediction performance</h2></div>
+  </div>
+  <div class="graph-grid premium-graphs">
+    {% for g in graphs %}
+    <a class="graph-card" href="{{ url_for('result_file', filename=g) }}" target="_blank">
+      <div class="graph-label"><span>{{ g|replace('_',' ')|replace('.png','')|title }}</span><b>↗</b></div>
+      <img src="{{ url_for('result_file', filename=g) }}" alt="{{ g }}">
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% else %}
+<div class="empty-state card large">
+  <div class="empty-icon">∿</div>
+  <div><h3>No model metrics yet</h3><p>Train the PINN first to generate evaluation values and graphs.</p></div>
+  <a class="btn primary" href="{{ url_for('train') }}">Train PINN</a>
+</div>
+{% endif %}
+{% endblock %}

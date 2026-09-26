@@ -1,0 +1,10 @@
+Flask>=3.0,<4
+mediapipe==0.10.21
+opencv-contrib-python>=4.10,<5
+numpy<2.0
+pandas>=2.0,<3
+torch>=2.2
+matplotlib>=3.8
+scikit-learn>=1.4
+
+gunicorn>=22,<24

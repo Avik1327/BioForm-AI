@@ -1,0 +1,13 @@
+BIOFORM AI FINAL WEB PROJECT
+
+1. Open this folder in VS Code.
+2. Open Terminal -> New Terminal.
+3. Run:
+   python3.11 -m venv .venv
+   source .venv/bin/activate
+   python -m pip install --upgrade pip setuptools wheel
+   python -m pip install -r requirements.txt
+   python app.py
+4. Open http://127.0.0.1:5000
+
+For camera recording, allow browser camera permission.

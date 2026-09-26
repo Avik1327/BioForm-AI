@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Train PINN · BioForm AI{% endblock %}
+{% block content %}
+<div class="page-head modern-head">
+  <div>
+    <div class="eyebrow">PHYSICS-INFORMED LEARNING</div>
+    <h1>Train the <span>fatigue model.</span></h1>
+    <p>BioForm AI combines data-driven learning with a simplified fatigue-dynamics physics constraint.</p>
+  </div>
+</div>
+
+<div class="two-col train-layout">
+  <form class="card form train-card" method="post" id="trainForm">
+    <div class="card-head">
+      <div><span class="step-badge">TRAIN</span><h3>Training configuration</h3></div>
+      <span class="soft-pill accent">PyTorch PINN</span>
+    </div>
+    <label>
+      <span class="field-label">Training epochs</span>
+      <input type="number" name="epochs" min="50" max="5000" value="1000">
+    </label>
+
+    <div class="physics-equation">
+      <span>Physics constraint</span>
+      <strong>dF/dt = αE(t) − βF(t)</strong>
+      <small>Fatigue state · movement effort · recovery dynamics</small>
+    </div>
+
+    <button class="btn primary btn-full btn-lg" type="submit">
+      <span>Train PINN model</span><span class="btn-arrow">→</span>
+    </button>
+    <p class="hint">The current supervised target is the biomechanical fatigue proxy. RPE is stored as separate session metadata.</p>
+  </form>
+
+  <div class="card metrics-card">
+    <div class="card-head">
+      <div><span class="step-badge">LATEST</span><h3>Model evaluation</h3></div>
+      {% if metrics %}<span class="status-pill good"><i></i> Model ready</span>{% endif %}
+    </div>
+
+    {% if metrics %}
+    <div class="metric-stack">
+      <div><span>R²</span><b>{{ '%.4f'|format(metrics.r2) }}</b><small>Coefficient of determination</small></div>
+      <div><span>MAE</span><b>{{ '%.6f'|format(metrics.mae) }}</b><small>{{ '%.2f'|format(metrics.mae_percentage_points) }} percentage points</small></div>
+      <div><span>MSE</span><b>{{ '%.6f'|format(metrics.mse) }}</b><small>Mean squared error</small></div>
+      <div><span>RMSE</span><b>{{ '%.6f'|format(metrics.rmse) }}</b><small>Root mean squared error</small></div>
+    </div>
+    <div class="split-pill"><span>Split method</span><b>{{ metrics.split_method }}</b></div>
+    {% else %}
+    <div class="empty-mini">
+      <div>↗</div>
+      <h3>No trained model yet</h3>
+      <p>Collect at least two separate sessions to enable a session-level train/test split.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('trainForm')?.addEventListener('submit', () => {
+  window.showLoading?.('Training physics-informed model', 'Optimizing data loss + physics loss. This can take a few minutes.');
+});
+</script>
+{% endblock %}

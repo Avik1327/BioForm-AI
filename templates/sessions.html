@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Sessions · BioForm AI{% endblock %}
+{% block content %}
+<div class="page-head modern-head">
+  <div>
+    <div class="eyebrow">SESSION LIBRARY</div>
+    <h1>Your movement <span>analysis history.</span></h1>
+    <p>Open any session to review annotated video, biomechanical metrics and video-specific graphs.</p>
+  </div>
+  <a class="btn primary" href="{{ url_for('analyze') }}">+ New analysis</a>
+</div>
+
+{% if sessions %}
+<div class="session-grid">
+  {% for s in sessions %}
+  <a class="session-card" href="{{ url_for('session_result', session_id=s.session_id) }}">
+    <div class="session-top">
+      <div class="session-icon">{{ s.exercise[:1] }}</div>
+      <div>
+        <h3>{{ s.exercise }}</h3>
+        <p>{{ s.source }} · {{ s.mode|title }}</p>
+      </div>
+      <span class="session-arrow">↗</span>
+    </div>
+    <div class="session-kpis">
+      <div><b>{{ s.average_form_score_percent }}%</b><span>Form</span></div>
+      <div><b>{{ s.peak_fatigue_percent }}%</b><span>Peak fatigue</span></div>
+      <div><b>{{ s.total_repetitions }}</b><span>Reps</span></div>
+    </div>
+    <div class="session-progress"><span style="width:{{ s.average_form_score_percent }}%"></span></div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state card large">
+  <div class="empty-icon">↗</div>
+  <div>
+    <h3>No sessions yet</h3>
+    <p>Analyze your first exercise video and BioForm AI will store its summary and graphs here.</p>
+  </div>
+  <a class="btn primary" href="{{ url_for('analyze') }}">Start first analysis</a>
+</div>
+{% endif %}
+{% endblock %}

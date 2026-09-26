@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: bioform-ai
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: BIOFORM_SECRET
+        generateValue: true
+      - key: BIOFORM_STORAGE_ROOT
+        value: /tmp/bioform
+      - key: BIOFORM_MAX_UPLOAD_MB
+        value: "150"
+      - key: PYTHONUNBUFFERED
+        value: "1"

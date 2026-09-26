@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Analyze · BioForm AI{% endblock %}
+{% block content %}
+<div class="page-head modern-head">
+  <div>
+    <div class="eyebrow">NEW ANALYSIS</div>
+    <h1>Turn an exercise video into <span>biomechanical insight.</span></h1>
+    <p>Choose a mode and exercise, then upload a video or record directly from your browser camera.</p>
+  </div>
+  <div class="head-stat">
+    <span class="status-pill"><i></i> Processing locally</span>
+  </div>
+</div>
+
+<div class="analysis-layout">
+  <form class="card form analysis-form" method="post" enctype="multipart/form-data" id="uploadForm">
+    <div class="card-head">
+      <div>
+        <span class="step-badge">01</span>
+        <h3>Configure session</h3>
+      </div>
+      <span class="soft-pill">Required</span>
+    </div>
+
+    <div class="form-grid">
+      <label>
+        <span class="field-label">Mode</span>
+        <select name="mode" id="mode">
+          {% for mode in modes %}<option value="{{ mode }}">{{ mode|title }}</option>{% endfor %}
+        </select>
+      </label>
+
+      <label>
+        <span class="field-label">Exercise</span>
+        <select name="exercise" id="exercise">
+          {% for e in exercises %}<option>{{ e }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <label class="upload-zone" id="uploadZone">
+      <input id="videoInput" type="file" name="video" accept="video/*" required>
+      <span class="upload-icon">↑</span>
+      <strong>Drop your exercise video here</strong>
+      <span>or click to browse · MP4, MOV, AVI, MKV, M4V, WebM</span>
+      <em id="fileName">No file selected</em>
+    </label>
+
+    <div class="form-grid">
+      <label>
+        <span class="field-label">Session RPE <span class="hint">optional</span></span>
+        <input type="number" name="rpe" min="0" max="10" step="0.5" placeholder="e.g. 7">
+      </label>
+
+      <label class="toggle-field">
+        <span class="field-label">Fatigue model</span>
+        <span class="toggle-row">
+          <input id="usePinn" type="checkbox" name="use_pinn" checked>
+          <span class="toggle-ui"></span>
+          <span>Use trained PINN when available</span>
+        </span>
+      </label>
+    </div>
+
+    <button class="btn primary btn-full btn-lg" type="submit">
+      <span>Analyze uploaded video</span><span class="btn-arrow">→</span>
+    </button>
+
+    <div class="info-line">
+      <span>◷</span>
+      <p>Processing runs locally on your Mac. Longer videos can take close to their playback duration.</p>
+    </div>
+  </form>
+
+  <div class="card camera-card">
+    <div class="card-head">
+      <div>
+        <span class="step-badge">02</span>
+        <h3>Record with browser camera</h3>
+      </div>
+      <span class="soft-pill accent">Optional</span>
+    </div>
+
+    <div class="camera-frame">
+      <video id="preview" autoplay muted playsinline></video>
+      <div class="camera-placeholder">
+        <div class="camera-reticle">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <p>Camera preview appears here</p>
+      </div>
+      <div class="record-indicator" id="recordIndicator"><i></i> REC</div>
+    </div>
+
+    <div class="camera-guide">
+      <span>Keep your full body visible</span>
+      <span>Use the recommended camera angle</span>
+      <span>Allow enough space for movement</span>
+    </div>
+
+    <div class="actions camera-actions">
+      <button class="btn glass" id="startRec" type="button">Start recording</button>
+      <button class="btn danger" id="stopRec" type="button" disabled>Stop & analyze</button>
+    </div>
+    <div id="recordStatus" class="status-message">Camera is idle.</div>
+  </div>
+</div>
+
+<section class="section quick-guide">
+  <div class="section-heading compact">
+    <div>
+      <div class="eyebrow">BEST RESULTS</div>
+      <h2>Before you analyze</h2>
+    </div>
+  </div>
+  <div class="guide-grid">
+    <div><b>01</b><span>Full body visible</span><p>Avoid cropping joints or feet out of frame.</p></div>
+    <div><b>02</b><span>Stable camera</span><p>Place the device at a fixed angle where possible.</p></div>
+    <div><b>03</b><span>Good lighting</span><p>Clear body boundaries improve pose tracking.</p></div>
+    <div><b>04</b><span>Single person</span><p>Keep the target athlete as the main subject.</p></div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analyze.js') }}"></script>
+{% endblock %}

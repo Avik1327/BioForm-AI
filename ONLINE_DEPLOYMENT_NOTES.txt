@@ -1,0 +1,27 @@
+BIOFORM AI - ONLINE DEPLOYMENT NOTES
+
+Primary deployment target:
+Render Docker Web Service
+
+Included deployment files:
+- Dockerfile
+- render.yaml
+- Procfile
+- requirements-deploy.txt
+- .dockerignore
+- .gitignore
+- DEPLOY_ON_RENDER.md
+
+Production changes:
+- Gunicorn instead of Flask development server
+- 0.0.0.0 / PORT-aware startup
+- CPU-only PyTorch in Docker
+- ffmpeg installed for browser-friendly H.264 annotated video
+- configurable runtime storage root
+- configurable upload-size limit
+- /health endpoint already available
+- production-safe debug default
+
+Important:
+The app's current fatigue target remains a prototype biomechanical proxy unless
+you replace it with experimentally collected ground-truth fatigue labels.

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Session result · BioForm AI{% endblock %}
+{% block content %}
+<div class="page-head result-head">
+  <div>
+    <div class="eyebrow">SESSION COMPLETE</div>
+    <div class="result-title-row">
+      <h1>{{ summary.exercise }}</h1>
+      <span class="status-pill good"><i></i> Analysis complete</span>
+    </div>
+    <p>{{ summary.source }} · {{ summary.mode|title }} · {{ summary.fatigue_source }}</p>
+  </div>
+  <div class="actions">
+    <a class="btn glass" href="{{ url_for('sessions') }}">Session history</a>
+    <a class="btn primary" href="{{ url_for('analyze') }}">Analyze another</a>
+  </div>
+</div>
+
+<div class="result-metrics">
+  <div class="result-kpi">
+    <span class="kpi-label">Repetitions</span>
+    <b>{{ summary.total_repetitions }}</b>
+    <small>Total detected</small>
+  </div>
+  <div class="result-kpi">
+    <span class="kpi-label">Average ROM</span>
+    <b>{{ summary.average_rom_deg }}<sup>°</sup></b>
+    <small>Movement range</small>
+  </div>
+  <div class="result-kpi gauge-kpi">
+    <div class="mini-gauge" style="--value: {{ summary.average_form_score_percent }};">
+      <div><b>{{ summary.average_form_score_percent }}%</b><span>Form</span></div>
+    </div>
+  </div>
+  <div class="result-kpi gauge-kpi fatigue">
+    <div class="mini-gauge" style="--value: {{ summary.peak_fatigue_percent }};">
+      <div><b>{{ summary.peak_fatigue_percent }}%</b><span>Peak fatigue</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="two-col section result-main">
+  <div class="card video-card">
+    <div class="card-head">
+      <div>
+        <span class="step-badge">VIDEO</span>
+        <h3>Annotated movement</h3>
+      </div>
+      <span class="soft-pill">Pose overlay</span>
+    </div>
+    <video controls class="result-video">
+      <source src="{{ url_for('session_media', session_id=summary.session_id, filename=summary.annotated_video) }}" type="video/mp4">
+    </video>
+    <div class="video-caption">
+      <span>MediaPipe pose landmarks</span>
+      <span>Exercise-specific analysis</span>
+    </div>
+  </div>
+
+  <div class="card summary-card">
+    <div class="card-head">
+      <div>
+        <span class="step-badge">SUMMARY</span>
+        <h3>Session details</h3>
+      </div>
+    </div>
+    <table class="kv premium-kv">
+      <tr><td><span class="kv-icon">◷</span>Duration</td><td>{{ summary.duration_seconds }} s</td></tr>
+      <tr><td><span class="kv-icon">↔</span>Maximum ROM</td><td>{{ summary.maximum_rom_deg }}°</td></tr>
+      <tr><td><span class="kv-icon">⚡</span>Average velocity</td><td>{{ summary.average_velocity_deg_s }}°/s</td></tr>
+      <tr><td><span class="kv-icon">⇄</span>Avg symmetry difference</td><td>{{ summary.average_symmetry_difference_deg }}°</td></tr>
+      <tr><td><span class="kv-icon">◉</span>Average fatigue</td><td>{{ summary.average_fatigue_percent }}%</td></tr>
+      <tr><td><span class="kv-icon">★</span>Session RPE</td><td>{{ summary.session_rpe_0_to_10 if summary.session_rpe_0_to_10 is not none else 'Not provided' }}</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <span class="insight-icon">✦</span>
+      <div>
+        <b>BioForm AI insight</b>
+        <p>This session combines movement quality metrics with fatigue estimation. Use the graphs below to inspect how performance changed over time.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="section-heading compact">
+    <div>
+      <div class="eyebrow">SESSION ANALYTICS</div>
+      <h2>Video-specific graphs</h2>
+    </div>
+    <span class="soft-pill">{{ summary.graphs|length }} graphs</span>
+  </div>
+
+  <div class="graph-grid premium-graphs">
+    {% for graph in summary.graphs %}
+    <a class="graph-card" href="{{ url_for('session_media', session_id=summary.session_id, filename=graph) }}" target="_blank">
+      <div class="graph-label"><span>{{ graph|replace('_',' ')|replace('.png','')|title }}</span><b>↗</b></div>
+      <img src="{{ url_for('session_media', session_id=summary.session_id, filename=graph) }}" alt="{{ graph }}">
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="note">
+  <span class="note-icon">i</span>
+  <div><b>Research-use notice</b><br>{{ summary.medical_disclaimer }}</div>
+</div>
+{% endblock %}
